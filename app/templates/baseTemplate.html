@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {{ bootstrap.load_css() }}
+    {{ bootstrap.load_js() }}
+    <link rel="icon" href="{{ url_for('static', filename="favicon.png") }}" type="image/x-icon">
+    {% block navbar %}
+      <nav class="navbar navbar-light bg-light">
+          <a class="navbar-brand" href="https://t.me/fc_zhemchuzhina">
+              <img src="{{ url_for('static', filename="logo.jpg") }}" width="50" height="50" class="d-inline-block align-top" alt="">
+              Zhemchuzhina Futbola
+
+
+          </a>
+        </nav>
+    {% endblock %}
+
+</head>
+<body>
+<hr>
+{% block content %}
+{% endblock %}
+</body>
+</html>
