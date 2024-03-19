@@ -2,7 +2,8 @@ import random
 
 from flask import request, make_response, render_template, flash, redirect, url_for, session
 from app.forms import SimpleFrom
-from app import app
+from app import app, db
+from models import Role, User
 
 
 
@@ -33,9 +34,9 @@ def index():
     default_user = {"username": "Alex"}
     session_text = session.get('text')
     if session_text is not None or session_text != "":
-        return render_template("index.html", text=session_text)
+        return render_template("index.html", text=session_text, auth=session.get('auth'))
     else:
-        return render_template('index.html', user=default_user)
+        return render_template('index.html', user=default_user, auth=session.get('auth'))
 
 
 
@@ -50,8 +51,26 @@ def testForm():
     form = SimpleFrom()
 
     if form.validate_on_submit():
-        flash("Thanks for registration!", "success")
-        session['text'] = "Thanks for registration! Your login: " + form.text.data + " and your email: " + form.email.data
-        form.text.data = ''
-        return redirect(url_for('index'))
-    return render_template('formTemplate.html', form=form, text=text)
+        user = db.session.query(User).filter(User.username == form.text.data).first()
+        if user is not None:
+            if user.password == form.password.data :
+                flash("Thanks for log in!", "success")
+                session['text'] = "Thanks for log in! Your login: " + user.email + " and your password: " + user.password
+                form.text.data = ''
+                session['auth'] = True
+                return redirect(url_for('index'))
+            else:
+                flash("Not correct password", "error")
+                session['auth'] = False
+        else:
+            flash("No such user", "warning")
+            session['auth'] = False
+
+    return render_template('formTemplate.html', form=form, text=text, auth=session.get('auth'))
+
+@app.route('/logout')
+def logout():
+    if session.get('auth'):
+        session['auth'] = False
+        session['text'] = None
+    return redirect(url_for('index'))

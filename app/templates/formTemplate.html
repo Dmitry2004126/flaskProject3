@@ -8,7 +8,20 @@
     {{ bootstrap.load_js() }}
 </head>
 <body style="margin-left: 10px">
-     <h1>Registration</h1>
+{% with messages = get_flashed_messages() %}
+   {% if messages %}
+       <script>
+        var messages = {{ messages | safe }};
+        for (var i =0; i <messages.length; i++){
+            alert(messages[i]);
+        }
+       </script>
+      {% for message in messages %}
+          <p class="fs-1"><i><b><mark>{{ message }}</mark></b></i></p>
+      {% endfor %}
+   {% endif %}
+{% endwith %}
+     <h1>Log in</h1>
     <form class="col-lg-3" method="post">
         {{ render_form(form) }}
     </form>

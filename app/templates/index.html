@@ -23,5 +23,9 @@
         <h1>Hello Stranger</h1>
     {% endif %}
 <p>This is a page of FC "Zhemchuzhina Futbola"</p>
-    <a class="btn btn-primary" href="/testForm" role="button">Registration</a>
+    {% if not auth %}
+        <a class="btn btn-primary" href="/testForm" role="button">Registration</a>
+    {% else %}
+        <a class="btn btn-primary" href="/logout" role="button">Log out</a>
+    {% endif %}
 {% endblock %}
