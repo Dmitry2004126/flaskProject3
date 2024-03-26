@@ -4,7 +4,7 @@ from wtforms.validators import Email, DataRequired
 
 class SimpleFrom(FlaskForm):
     text = StringField("Login: ", validators=[DataRequired()])
-    #email = StringField("Email: ", validators=[Email()])
+    email = StringField("Email: ", validators=[Email()])
     #gender = SelectField('Gender: ', choices=[('m', 'man'), ('w', 'woman')])
 
     password = PasswordField('Password: ', [
@@ -13,5 +13,5 @@ class SimpleFrom(FlaskForm):
     ])
     confirm = PasswordField('Repeat Password: ')
 
-    accept_tos = BooleanField('I accept all. ', [validators.DataRequired()])
+    accept_tos = BooleanField('You will get an email! ', [validators.DataRequired()])
     submit = SubmitField("Log in!")

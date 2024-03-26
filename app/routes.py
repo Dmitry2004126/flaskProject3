@@ -4,6 +4,8 @@ from flask import request, make_response, render_template, flash, redirect, url_
 from app.forms import SimpleFrom
 from app import app, db
 from models import Role, User
+from flask_mail import Message
+from . import mail
 
 
 
@@ -53,14 +55,15 @@ def testForm():
     if form.validate_on_submit():
         user = db.session.query(User).filter(User.username == form.text.data).first()
         if user is not None:
-            if user.password == form.password.data :
+            if user.password == form.password.data and user.email == form.email.data :
                 flash("Thanks for log in!", "success")
                 session['text'] = "Thanks for log in! Your login: " + user.email + " and your password: " + user.password
                 form.text.data = ''
                 session['auth'] = True
+                confirm(user)
                 return redirect(url_for('index'))
             else:
-                flash("Not correct password", "error")
+                flash("Not correct password or email", "error")
                 session['auth'] = False
         else:
             flash("No such user", "warning")
@@ -74,3 +77,12 @@ def logout():
         session['auth'] = False
         session['text'] = None
     return redirect(url_for('index'))
+
+def confirm(user):
+    send_mail(user.email , 'Create new user', 'send_mail', user=user)
+
+def send_mail(to, subject, template, **kwargs):
+    msg = Message(subject, sender=app.config['MAIL_USERNAME'],
+                  recipients=[to])
+    msg.body = render_template(template+".txt", **kwargs)
+    mail.send(msg)
