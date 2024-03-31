@@ -1,15 +1,17 @@
 import random
 
 from flask import request, make_response, render_template, flash, redirect, url_for, session
-from app.forms import SimpleFrom
-from app import app, db
-from models import Role, User
+from app.main.forms import SimpleFrom
+
+from app.models import User
 from flask_mail import Message
-from . import mail
+from .. import mail
+from . import main
+from app import db
 
 
 
-@app.route("/check")
+@main.route("/check")
 def cookie():
     user_agent = request.headers.get('User-Agent')
     if user_agent.lower().__contains__("mozilla"):
@@ -20,18 +22,18 @@ def cookie():
         return "<H1>Everything is bad!<H1>"
 
 
-@app.route("/index/<name>/<city>")
+@main.route("/index/<name>/<city>")
 def town(name, city):
     return "<h1>Hello, {}. Yoa are from {}!<h1>".format(name, city)
 
 
-@app.route("/error")
+@main.route("/error")
 def error():
     return page_not_found(error)
 
 
-@app.route('/')
-@app.route('/index')
+@main.route('/')
+@main.route('/index')
 def index():
     default_user = {"username": "Alex"}
     session_text = session.get('text')
@@ -42,12 +44,9 @@ def index():
 
 
 
-@app.errorhandler(400)
-def page_not_found(e):
-    return render_template("404.html"), 400
 
 
-@app.route('/testForm', methods=['GET', 'POST'])
+@main.route('/testForm', methods=['GET', 'POST'])
 def testForm():
     text = None
     form = SimpleFrom()
@@ -71,7 +70,7 @@ def testForm():
 
     return render_template('formTemplate.html', form=form, text=text, auth=session.get('auth'))
 
-@app.route('/logout')
+@main.route('/logout')
 def logout():
     if session.get('auth'):
         session['auth'] = False
