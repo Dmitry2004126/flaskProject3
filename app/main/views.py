@@ -8,7 +8,7 @@ from flask_mail import Message
 from .. import mail
 from . import main
 from app import db
-
+from flask_login import login_required
 
 
 @main.route("/check")
@@ -38,9 +38,9 @@ def index():
     default_user = {"username": "Alex"}
     session_text = session.get('text')
     if session_text is not None or session_text != "":
-        return render_template("index.html", text=session_text, auth=session.get('auth'))
+        return render_template("index.html", text=session_text)
     else:
-        return render_template('index.html', user=default_user, auth=session.get('auth'))
+        return render_template('index.html', user=default_user)
 
 
 
@@ -68,14 +68,14 @@ def testForm():
             flash("No such user", "warning")
             session['auth'] = False
 
-    return render_template('formTemplate.html', form=form, text=text, auth=session.get('auth'))
+    return render_template('formTemplate.html', form=form, text=text)
 
 @main.route('/logout')
 def logout():
     if session.get('auth'):
         session['auth'] = False
         session['text'] = None
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))
 
 def confirm(user):
     send_mail(user.email , 'Create new user', 'send_mail', user=user)
@@ -85,3 +85,9 @@ def send_mail(to, subject, template, **kwargs):
                   recipients=[to])
     msg.body = render_template(template+".txt", **kwargs)
     mail.send(msg)
+
+
+@main.route("/secret")
+@login_required
+def secret():
+    return "Only for auth"

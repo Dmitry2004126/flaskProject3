@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+    {% from 'bootstrap5/form.html' import render_form %}
+    {{ bootstrap.load_css() }}
+    {{ bootstrap.load_js() }}
+</head>
+<body>
+<h1 style="text-align:center">Registration </h1>
+<div style="display: flex; justify-content:center">
+        <form class="col-lg-3" method="post">
+        {{ render_form(form) }}
+    </form>
+</div>
+</body>
+</html>

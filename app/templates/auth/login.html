@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    {% from 'bootstrap5/form.html' import render_form %}
+    {{ bootstrap.load_css() }}
+    {{ bootstrap.load_js() }}
+</head>
+<body>
+{% with messages = get_flashed_messages() %}
+   {% if messages %}
+       <script>
+        var messages = {{ messages | safe }};
+        for (var i =0; i <messages.length; i++){
+            alert(messages[i]);
+        }
+       </script>
+   {% endif %}
+{% endwith %}
+<h1 style="text-align:center">Log in </h1>
+<div style="display: flex; justify-content:center">
+        <form class="col-lg-3" method="post">
+        {{ render_form(form) }}
+    </form>
+</div>
+</body>
+</html>

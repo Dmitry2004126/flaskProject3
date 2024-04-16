@@ -15,17 +15,17 @@
       {% endfor %}
    {% endif %}
 {% endwith %}
-    {% if user %}
-        <h1>Hello, {{ user.username }}</h1>
+    {% if current_user.is_authenticated %}
+        <h1>Hello, {{ current_user.username }}</h1>
     {% elif text %}
         <h1>{{ text }}</h1>
     {% else %}
         <h1>Hello Stranger</h1>
     {% endif %}
 <p>This is a page of FC "Zhemchuzhina Futbola"</p>
-    {% if not auth %}
-        <a class="btn btn-primary" href="/testForm" role="button">Registration</a>
+    {% if current_user.is_authenticated %}
+        <a class="btn btn-primary" href="/auth/logout" role="button">Log out</a>
     {% else %}
-        <a class="btn btn-primary" href="/logout" role="button">Log out</a>
+        <a class="btn btn-primary" href="/auth/login" role="button">Registration</a>
     {% endif %}
 {% endblock %}
