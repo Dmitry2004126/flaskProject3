@@ -1,0 +1,6 @@
+Dear {{ user.username }}, welcome to our great app!
+
+Confirm your account by forwarding to this link:
+{{ 'http://127.0.0.1:5000' + url_for('auth.confirm', token=token)}}
+
+With honor, Team

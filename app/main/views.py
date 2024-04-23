@@ -91,3 +91,10 @@ def send_mail(to, subject, template, **kwargs):
 @login_required
 def secret():
     return "Only for auth"
+
+
+@main.route("/testConfirm")
+def testConfirm():
+    user = User.query.filter_by().first()
+    tmp = user.generate_confirmation_token()
+    user.confirm(tmp)
