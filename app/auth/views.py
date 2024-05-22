@@ -11,9 +11,11 @@ from app import mail
 
 @auth.before_app_request
 def before_request():
-    if current_user.is_authenticated and not current_user.confirmed and request.blueprint != 'auth'\
-            and request.endpoint != 'static':
-        return redirect(url_for('auth.unconfirmed'))
+    if current_user.is_authenticated:
+        current_user.ping()
+        if current_user.confirmed and request.blueprint != 'auth' \
+                and request.endpoint != 'static':
+            return redirect(url_for('auth.unconfirmed'))
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -50,9 +52,6 @@ def register():
     return render_template("auth/registration.html", form=form)
 
 
-
-
-
 @auth.route('/confirm/<token>')
 @login_required
 def confirm(token):
@@ -64,9 +63,13 @@ def confirm(token):
     else:
         flash("Bad")
     return redirect(url_for('main.index'))
+
+
 def send_confirm(user, token):
     send_mail(user.email, 'Create your account', 'auth/confirm', user=user, token=token.decode('utf-8'))
     redirect(url_for('main.index'))
+
+
 def send_mail(to, subject, template, **kwargs):
     msg = Message(subject, sender="ttestovich271@gmail.com",
                   recipients=[to])
@@ -79,6 +82,7 @@ def send_mail(to, subject, template, **kwargs):
     thread = Thread(target=send_async_email, args=[app, msg])
     thread.start()
     return thread
+
 
 def send_async_email(app, msg):
     with app.app_context():

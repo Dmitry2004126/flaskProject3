@@ -9,6 +9,7 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or "ttestovich271@gmail.com"
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or "uvke dpsj gczk mdbk"
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+    FLASKY_ADMIN = "test2@test.ru"
 
     @staticmethod
     def init_app(app):
@@ -17,7 +18,7 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-                                'mysql://root:@localhost/flask_proj'
+                                'mysql://root:@localhost/flask_proj2'
 
 
 class TestingConfig(Config):

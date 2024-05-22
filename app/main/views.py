@@ -2,8 +2,8 @@ import random
 
 from flask import request, make_response, render_template, flash, redirect, url_for, session
 from app.main.forms import SimpleFrom
-
-from app.models import User
+from ..decorators import admin_required, permission_required
+from app.models import User, Permission
 from flask_mail import Message
 from .. import mail
 from . import main
@@ -87,6 +87,20 @@ def send_mail(to, subject, template, **kwargs):
     mail.send(msg)
 
 
+@main.route('/admin')
+@login_required
+@admin_required
+def for_admin():
+    return "For admin"
+
+
+@main.route('/moderate')
+@login_required
+@permission_required(Permission.MODERATE)
+def for_moderator():
+    return "For moderator"
+
+
 @main.route("/secret")
 @login_required
 def secret():
@@ -98,3 +112,8 @@ def testConfirm():
     user = User.query.filter_by().first()
     tmp = user.generate_confirmation_token()
     user.confirm(tmp)
+
+@main.route('/user/<username>')
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('profile.html', user=user)
