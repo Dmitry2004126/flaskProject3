@@ -1,1 +1,1 @@
-Hello, {{user.username}}. You log in in our site. If it wasn't you. Sorry :(
+Hello, {{user.username}}. You log in our site. If it wasn't you. Sorry :(

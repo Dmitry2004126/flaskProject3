@@ -1,5 +1,7 @@
 import os
+
 basedir = os.path.abspath(os.path.dirname(__file__))
+
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or "hard to unlock"
@@ -15,21 +17,23 @@ class Config:
     def init_app(app):
         pass
 
+
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-                                'mysql://root:@localhost/flask_proj2'
+                              'mysql://root:@localhost/flask_proj2'
 
 
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-                              'mysql://root:@localhost/flask_proj'
+                              'mysql://root:@localhost/flask_proj2'
 
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-                              'mysql://root:@localhost/flask_proj'
+                              'mysql://root:@localhost/flask_proj2'
+
 
 config = {
     'development': DevelopmentConfig,

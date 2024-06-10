@@ -6,21 +6,32 @@
     {{ bootstrap.load_js() }}
     <link rel="icon" href="{{ url_for('static', filename="favicon.png") }}" type="image/x-icon">
     {% block navbar %}
-      <nav class="navbar navbar-light bg-light">
-          <a class="navbar-brand" href="https://t.me/fc_zhemchuzhina">
-              <img src="{{ url_for('static', filename="logo.jpg") }}" width="50" height="50" class="d-inline-block align-top" alt="">
-              Zhemchuzhina Futbola
-
-
-          </a>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid" >
+                <a class="navbar-brand" href="https://t.me/fc_zhemchuzhina">
+                    <img src="{{ url_for('static', filename="logo.jpg") }}" width="50" height="50"
+                         class="d-inline-block align-text-top" alt="">
+                </a>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{url_for('main.index')}}">
+                            Zhemchuzhina Futbola
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('main.showProfile')}}">Profile</a>
+                    </li>
+                </ul>
+                {% if current_user.is_authenticated %}
+                    <a class="btn btn-outline-primary"  href="/auth/logout" role="button">Log out</a>
+                {% else %}
+                    <a class="btn btn-outline-primary" href="/auth/login" role="button">Log in</a>
+                {% endif %}
+            </div>
         </nav>
-
-
     {% endblock %}
-
 </head>
-<body>
-<hr>
+<body style="background-color: #56AFD1">
 {% block content %}
 {% endblock %}
 </body>

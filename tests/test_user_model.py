@@ -1,5 +1,4 @@
 import unittest
-from unittest import TestCase
 
 from app.models import User, Permission, AnonymousUser, Role
 
@@ -15,6 +14,7 @@ class UserModelTestCase(unittest.TestCase):
         user.set_password = "hash"
         with self.assertRaises(AttributeError):
             user.password
+
     def test_password_verify(self):
         user = User()
         user.set_password = "hash"

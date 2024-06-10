@@ -9,20 +9,24 @@
 </head>
 <body>
 {% with messages = get_flashed_messages() %}
-   {% if messages %}
-       <script>
-        var messages = {{ messages | safe }};
-        for (var i =0; i <messages.length; i++){
-            alert(messages[i]);
-        }
-       </script>
-   {% endif %}
+    {% if messages %}
+        <script>
+            var messages = {{ messages | safe }};
+            for (var i =0; i <messages.length; i++){
+                alert(messages[i]);
+            }
+        </script>
+    {% endif %}
 {% endwith %}
-<h1 style="text-align:center">Log in </h1>
+<h1 style="text-align:center">Log in</h1>
 <div style="display: flex; justify-content:center">
-        <form class="col-lg-3" method="post">
-        {{ render_form(form) }}
-    </form>
+    <form class="col-lg-3" method="post">{{ render_form(form) }}</form>
+</div>
+<div style="display: flex; justify-content:center; margin-top: 10px">
+    <div class="col-lg-3">
+        <p>Or sign in</p>
+        <a class="btn btn-primary" href="/auth/register" role="button">Registration</a>
+    </div>
 </div>
 </body>
 </html>

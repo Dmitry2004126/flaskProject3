@@ -1,9 +1,8 @@
-from flask_login import UserMixin
 from datetime import datetime
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import login_manager
-from authlib.jose import jwt, JsonWebSignature
+from authlib.jose import JsonWebSignature
 from flask_login import UserMixin, AnonymousUserMixin
 
 
@@ -13,6 +12,8 @@ class Permission:
     WRITE = 4
     MODERATE = 8
     ADMIN = 16
+
+
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
@@ -26,27 +27,6 @@ class Role(db.Model):
         if self.permissions is None:
             self.permissions = 0
 
-    def __repr__(self):
-        return '<Role %r>' % self.name
-
-    @staticmethod
-    def insert_roles():
-        roles = {
-            'User': [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE],
-            'Moderator' : [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE, Permission.MODERATE],
-            'Administrator' : [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE, Permission.MODERATE, Permission.ADMIN]
-        }
-        default_role = "User"
-        for r in roles:
-            role = Role.query.filter_by(name=r).first()
-            if role is None:
-                role = Role(name=r)
-            role.reset_permission()
-            for perm in roles[r]:
-                role.add_permission(perm)
-            role.default = (role.name == default_role)
-            db.session.add(role)
-        db.session.commit()
     def has_permission(self, perm):
         return self.permissions & perm == perm
 
@@ -60,6 +40,30 @@ class Role(db.Model):
 
     def reset_permission(self):
         self.permissions = 0
+
+    def __repr__(self):
+        return '<Role %r>' % self.name
+
+    @staticmethod
+    def insert_roles():
+        roles = {
+            'User': [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE],
+            'Moderator': [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE, Permission.MODERATE],
+            'Administrator': [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE, Permission.MODERATE,
+                              Permission.ADMIN]
+        }
+        default_role = "User"
+        for r in roles:
+            role = Role.query.filter_by(name=r).first()
+            if role is None:
+                role = Role(name=r)
+            role.reset_permission()
+            for perm in roles[r]:
+                role.add_permission(perm)
+            role.default = (role.name == default_role)
+            db.session.add(role)
+        db.session.commit()
+
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -95,14 +99,13 @@ class User(db.Model, UserMixin):
         def is_admin(self):
             return False
 
-
-
     def generate_confirmation_token(self):
         jws = JsonWebSignature()
         protected = {'alg': 'HS256'}
         payload = self.id
         secret = 'secret'
         return jws.serialize_compact(protected, payload, secret)
+
     def confirm(self, token):
         jws = JsonWebSignature()
         data = jws.deserialize_compact(s=token, key='secret')
@@ -113,11 +116,11 @@ class User(db.Model, UserMixin):
             db.session.add(self)
             return True
 
-
     def ping(self):
         self.last_seen = datetime.utcnow()
         db.session.add(self)
         db.session.commit()
+
     @property
     def password(self):
         raise AttributeError('password not enable to read')
@@ -132,14 +135,55 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return '<User %r>' % self.username
 
+
 class AnonymousUser(AnonymousUserMixin):
     def can(self, perm):
         return False
 
     def is_admin(self):
         return False
+
+
+class Item(db.Model):
+    __tablename__ = 'items'
+    item_id = db.Column(db.Integer, primary_key=True)
+    item_name = db.Column(db.String(100))
+    item_photo = db.Column(db.String(1000))
+    cat_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
+    item_price = db.Column(db.Numeric)
+
+
+class Category(db.Model):
+    __tablename__ = 'categories'
+    id = db.Column(db.Integer, primary_key=True)
+    cat_name = db.Column(db.String(50), unique=True)
+    prod = db.relationship('Item', backref='cat', lazy="dynamic")
+
+
+class Basket(db.Model):
+    __tablename__ = 'baskets'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    item_id = db.Column(db.Integer, db.ForeignKey('items.item_id'))
+    quantity = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<Basket %r>' % self.user_id + self.prod_id
+
+    def add_item(self, item_id):
+        self.quantity += 1
+        db.session.add(self)
+        return True
+
+    def remove_item(self, id_item):
+        self.quantity -= 1
+        db.session.add(self)
+        return True
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
 
 login_manager.anonymous_user = AnonymousUser

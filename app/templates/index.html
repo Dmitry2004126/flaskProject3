@@ -1,31 +1,60 @@
 {% extends "baseTemplate.html" %}
-
-
 {% block content %}
-    {% with messages = get_flashed_messages() %}
-   {% if messages %}
-       <script>
-        var messages = {{ messages | safe }};
-        for (var i =0; i <messages.length; i++){
-            alert(messages[i]);
-        }
-       </script>
-      {% for message in messages %}
-          <p class="fs-1"><i><b><mark>{{ message }}</mark></b></i></p>
-      {% endfor %}
-   {% endif %}
-{% endwith %}
-    {% if current_user.is_authenticated %}
-        <h1>Hello, {{ current_user.username }}</h1>
-    {% elif text %}
-        <h1>{{ text }}</h1>
-    {% else %}
-        <h1>Hello Stranger</h1>
-    {% endif %}
-<p>This is a page of FC "Zhemchuzhina Futbola"</p>
-    {% if current_user.is_authenticated %}
-        <a class="btn btn-primary" href="/auth/logout" role="button">Log out</a>
-    {% else %}
-        <a class="btn btn-primary" href="/auth/login" role="button">Registration</a>
-    {% endif %}
+    <div style="text-align:center">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <script>
+                    var messages = {{ messages | safe }};
+                    for (var i =0; i <messages.length; i++){
+                        alert(messages[i]);
+                    }
+                </script>
+                {% for message in messages %}
+                    <p class="fs-1"><i><b><mark>{{ message }}</mark></b></i></p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% if current_user.is_authenticated %}
+            <h1>Hello, {{ current_user.username }}!</h1>
+        {% elif text %}
+            <h1>{{ text }}</h1>
+        {% else %}
+            <h1>Hello Stranger</h1>
+        {% endif %}
+        <p>This is a page of FC "Zhemchuzhina Futbola"</p>
+    </div>
+    <div class="container py-5">
+        <div class="row">
+            {% for item in items %}
+                <div class="col-md-6 col-lg-4 mb-4 mb-md-0">
+                    <div class="card mb-4">
+                        <div class="d-flex justify-content-between p-3">
+                            <p class="lead mb-0"><a class="text-decoration-none link-dark"
+                                                  href="{{ url_for('main.show_item',item_id=item.Item.item_id) }}">
+                                {{ item.Item.item_name }}</a></p>
+                        </div>
+                        <div class="">
+                            <a class="text-decoration-none link-dark"
+                               href="{{ url_for('main.show_item',item_id=item.Item.item_id) }}">
+                                <img src="{{ item.Item.item_photo }}" class="card-img-top"
+                                     style="object-fit: contain; height: 20vw;" alt="item"/>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <p class="small"><a href=""
+                                              class="text-muted">{{ item.Category.cat_name}}</a></p>
+                                <p class="small">{{ item.Item.item_price }} ₽</p>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <a class='btn btn-dark' href="{{ url_for('main.show_item',item_id=item.Item.item_id) }}">
+                                    <img src="{{ url_for('static', filename="buy.png") }}">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
