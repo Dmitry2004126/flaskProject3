@@ -15,12 +15,14 @@ oauth = OAuth()
 login_manager = LoginManager()
 migrate = Migrate()
 login_manager.login_view = 'auth.login'
-admin = Admin()
 
 
 class CustomAdminIndexView(AdminIndexView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role_id == 3
+
+
+admin = Admin(index_view=CustomAdminIndexView())
 
 
 def create_app(config_name="default"):

@@ -32,17 +32,17 @@ class UserModelTestCase(unittest.TestCase):
         Role.insert_roles()
         user = User(email='test@simple.com')
         user.set_password = "caty"
-        self.assertTrue(user.can(Permission.FOLLOW))
-        self.assertTrue(user.can(Permission.COMMENT))
-        self.assertTrue(user.can(Permission.WRITE))
+        self.assertTrue(user.can(Permission.WATCH))
+        self.assertTrue(user.can(Permission.ADDTOBASKET))
+        self.assertTrue(user.can(Permission.ADDNEW))
         self.assertFalse(user.can(Permission.MODERATE))
         self.assertFalse(user.can(Permission.ADMIN))
 
     def test_anon(self):
         Role.insert_roles()
         user = AnonymousUser()
-        self.assertFalse(user.can(Permission.FOLLOW))
-        self.assertFalse(user.can(Permission.COMMENT))
-        self.assertFalse(user.can(Permission.WRITE))
+        self.assertFalse(user.can(Permission.WATCH))
+        self.assertFalse(user.can(Permission.ADDTOBASKET))
+        self.assertFalse(user.can(Permission.ADDNEW))
         self.assertFalse(user.can(Permission.MODERATE))
         self.assertFalse(user.can(Permission.ADMIN))

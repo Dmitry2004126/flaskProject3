@@ -7,10 +7,10 @@ from flask_login import UserMixin, AnonymousUserMixin
 
 
 class Permission:
-    FOLLOW = 1
-    COMMENT = 2
-    WRITE = 4
-    MODERATE = 8
+    WATCH = 1
+    ADDTOBASKET = 2
+    ADDNEW = 4
+    DELETE = 8
     ADMIN = 16
 
 
@@ -47,9 +47,9 @@ class Role(db.Model):
     @staticmethod
     def insert_roles():
         roles = {
-            'User': [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE],
-            'Moderator': [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE, Permission.MODERATE],
-            'Administrator': [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE, Permission.MODERATE,
+            'User': [Permission.WATCH, Permission.ADDTOBASKET],
+            'Moderator': [Permission.WATCH, Permission.ADDTOBASKET, Permission.ADDNEW, Permission.DELETE],
+            'Administrator': [Permission.WATCH, Permission.ADDTOBASKET, Permission.ADDNEW, Permission.DELETE,
                               Permission.ADMIN]
         }
         default_role = "User"

@@ -1,7 +1,7 @@
 import random
 
 from flask import request, make_response, render_template, flash, redirect, url_for, session
-from app.main.forms import SimpleFrom
+from app.main.forms import SimpleFrom, AddNewItemForm
 from ..decorators import admin_required, permission_required
 from app.models import *
 from flask_mail import Message
@@ -10,12 +10,6 @@ from . import main, errors
 from app import db, admin
 from flask_login import login_required, current_user
 from flask_admin.contrib.sqla import ModelView
-
-admin.add_view(ModelView(User, db.session))
-admin.add_view(ModelView(Role, db.session))
-admin.add_view(ModelView(Item, db.session))
-admin.add_view(ModelView(Basket, db.session))
-admin.add_view(ModelView(Category, db.session))
 
 
 @main.route("/check")
@@ -218,8 +212,42 @@ def send_mail(to, subject, template, **kwargs):
     mail.send(msg)
 
 
-@main.route('/moderate')
-@login_required
-@permission_required(Permission.MODERATE)
-def for_moderator():
-    return "For moderator"
+@main.route('/new', methods=['GET', 'POST'])
+@permission_required(Permission.ADDNEW)
+def add_new_item():
+    """
+    Function for moderators to add a new item
+    :return: index.html with new item after inputting data in form
+    """
+    categories = Category.query.all()
+    form = AddNewItemForm()
+    form.cat_id.choices = [(category.id, category.cat_name) for category in categories]
+    if form.validate_on_submit():
+        item = Item(item_name=form.item_name.data, item_photo=form.item_photo.data, cat_id=form.cat_id.data,
+                    item_price=form.item_price.data)
+        db.session.add(item)
+        db.session.commit()
+        return redirect(url_for('main.index'))
+    return render_template("add_new_item.html", form=form)
+
+
+@main.route("/items/<id_item>/delete")
+@permission_required(Permission.DELETE)
+def delete_item(id_item):
+    """
+    Function for moderator to delete item
+    :param id_item: id of item
+    :return: index.html without this item
+    """
+    item = Item.query.filter_by(item_id=id_item).first()
+    if item:
+        Item.query.filter_by(item_id=id_item).delete()
+        db.session.commit()
+    return redirect(url_for('main.index'))
+
+
+admin.add_view(ModelView(User, db.session))
+admin.add_view(ModelView(Role, db.session))
+admin.add_view(ModelView(Item, db.session))
+admin.add_view(ModelView(Basket, db.session))
+admin.add_view(ModelView(Category, db.session))

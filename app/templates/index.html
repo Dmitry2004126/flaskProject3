@@ -9,9 +9,6 @@
                         alert(messages[i]);
                     }
                 </script>
-                {% for message in messages %}
-                    <p class="fs-1"><i><b><mark>{{ message }}</mark></b></i></p>
-                {% endfor %}
             {% endif %}
         {% endwith %}
         {% if current_user.is_authenticated %}
